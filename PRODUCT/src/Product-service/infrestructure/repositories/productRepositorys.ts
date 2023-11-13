@@ -2,7 +2,7 @@ import { ProductRepository } from "../../domain/repositories/productRepository";
 import { Product } from "../../domain/entities/product";
 import { ProductData } from "../../domain/repositories/productRepository";
 import https from 'https';
-import { pool } from "../../../database/mariaDb";
+import { pool } from "../../../../database/mariaDb";
 
 export class ProductRepositoryr implements ProductRepository {
     async createProducts(prod: ProductData): Promise<Product | null> {

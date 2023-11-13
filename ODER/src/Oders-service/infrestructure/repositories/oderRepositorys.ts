@@ -1,9 +1,8 @@
 import { OderRepository } from "../../domain/repositories/oderRepository";
 import { Oder } from "../../domain/entities/oder";
 import { OderData} from "../../domain/repositories/oderRepository";
-import https from 'https';
-import { pool2 } from "../../../database/postgresDb";
-import { pool } from "../../../database/mariaDb";
+import { pool2 } from "../../../../database/postgresDb";
+import { pool } from "../../../../database/mariaDb";
 
 export class OderRepositoryr implements OderRepository {
     async createOder(oder:OderData ): Promise<Oder | null> {
@@ -13,7 +12,7 @@ export class OderRepositoryr implements OderRepository {
 
             // Primero, verifica si el id_product existe en la tabla Product
             conn2 = await pool.getConnection();
-            const queryCheck = "SELECT id FROM Product WHERE id = ?";
+            const queryCheck = "SELECT id FROM Product WHERE id_product = ?";
             const product = await conn2.query(queryCheck, [oder.id_product]);
             conn2.release();
 
@@ -21,7 +20,6 @@ export class OderRepositoryr implements OderRepository {
                 console.log("El id_product no existe en la tabla Product");
                 return null;
             }
-
             console.log("Conexión exitosa a la BD");
             const query = "INSERT INTO Product (id, id_product, amount, price) VALUES ($1,$2,$3,$4)";
             const result = await client.query(query, [oder.id, oder.id_product, oder.amount, oder.price]);
@@ -35,6 +33,9 @@ export class OderRepositoryr implements OderRepository {
             console.log(error);
             return null;
         } finally {
+            if (conn2){
+                conn2.release();
+            }
             if (client) {
                 client.release(); // Devuelve la conexión al pool al finalizar
             }
@@ -42,15 +43,14 @@ export class OderRepositoryr implements OderRepository {
     }
 
     async getOders(): Promise<Oder[] | null> {
-        let conn;
+        const client = await pool2.connect();
         try {   
-            conn = await pool.getConnection();
             console.log("Conexión exitosa a la BD");
             const query = "SELECT * FROM Product ";
-            const result = await conn.query(query);
+            const result = await client.query(query);
             console.log(query);
-            if (result.affectedRows > 0) {
-                return result;
+            if (result.rowCount> 0) {
+                return result.rows;
             } else {
                 return null;
             }
@@ -58,8 +58,8 @@ export class OderRepositoryr implements OderRepository {
             console.log(error);
             return null;
         } finally {
-            if (conn) {
-                conn.release(); // Devuelve la conexión al pool al finalizar
+            if (client) {
+                client.release(); // Devuelve la conexión al pool al finalizar
             }
         }
     }

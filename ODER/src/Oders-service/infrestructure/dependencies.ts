@@ -1,5 +1,5 @@
 import { CreateOderCase } from "../application/createOders";
-import { OderRepositoryr } from "./repositories/productRepositorys";
+import { OderRepositoryr } from "./repositories/oderRepositorys";
 import { OderController } from "./controller/controllerProduct";
 import { GetOderCase } from "../application/getOders";
 

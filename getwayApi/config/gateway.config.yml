@@ -6,15 +6,15 @@ admin:
 apiEndpoints:
   productsAPI:
     host: localhost
-    paths: '/Api/v1/Product'
+    paths: '/Api/v1/Product/*'
   ordersAPI:
     host: localhost
-    paths: '/Api/v1/Oder'
+    paths: '/Api/v1/Oder/*'
 serviceEndpoints:
   productService:
-    url: 'http://localhost:3000'
-  orderService:
     url: 'http://localhost:3001'
+  orderService:
+    url: 'http://localhost:3002'
 policies:
   - proxy
 pipelines:
